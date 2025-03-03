@@ -3,26 +3,18 @@ import { BotService } from "./bot.service";
 import { BotUpdate } from "./bot.update";
 import { SequelizeModule } from "@nestjs/sequelize";
 import { Bot } from "./models/bot.model";
-// import { AddressService } from "./address.service";
-import { Master } from "./models/master.model";
-// import { AddressUpdate } from "./address.update";
-// import { CarUpdate } from "./car.update";
-// import { CarService } from "./car.service";
+import { Admin } from "./models/admin.model";
 import { Client } from "./models/client.model";
-import { MasterService } from "./master.service";
-import { MasterUpdate } from "./master.update";
+import { AdminService } from "./admin.service";
+import { AdminUpdate } from "./admin.update";
 import { ClientService } from "./client.service";
 import { ClientUpdate } from "./client.update";
 
 @Module({
-  imports: [SequelizeModule.forFeature([Bot, Master, Client])],
+  imports: [SequelizeModule.forFeature([Bot, Admin, Client])],
   providers: [
-    // CarUpdate,
-    // CarService,
-    // AddressUpdate,
-    // AddressService,
-    MasterUpdate,
-    MasterService,
+    AdminUpdate,
+    AdminService,
     ClientUpdate,
     ClientService,
     BotService,

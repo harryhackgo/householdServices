@@ -2,68 +2,38 @@ import { InjectBot } from "nestjs-telegraf";
 import { Context, Markup, Telegraf } from "telegraf";
 import { BOT_NAME } from "../app.constants";
 import { InjectModel } from "@nestjs/sequelize";
-import { Master } from "./models/master.model";
+import { Admin } from "./models/admin.model";
 import { Bot } from "./models/bot.model";
 import { Client } from "./models/client.model";
 
-export class MasterService {
+export class AdminService {
   constructor(
     @InjectBot(BOT_NAME) private readonly bot: Telegraf<Context>,
-    @InjectModel(Master) private readonly masterModel: typeof Master,
+    @InjectModel(Admin) private readonly adminModel: typeof Admin,
     @InjectModel(Client) private readonly clientModel: typeof Client,
     @InjectModel(Bot) private readonly botModel: typeof Bot
   ) {}
 
-  async onMaster(ctx: Context) {
+  async onAdmin(ctx: Context) {
     try {
       const user_id = ctx.from!.id;
       // const isClient = await this.clientModel.findByPk(user_id);
+      const isAdmin = await this.adminModel.findByPk(user_id);
       // if (isClient) {
       //   return await ctx.replyWithHTML(
-      //     `Sorry, but you are already registered as a Client`
+      //     `Sorry, but you are already registered as a client`
       //   );
-      // }
-      const services = [
-        { name: "Barbershop" },
-        { name: "Jewelry" },
-        { name: "Clark" },
-        { name: "Shoe shining" },
-      ];
-      const keyboard: { text: string; callback_data: string }[][] = [];
-      services.forEach((service) => {
-        keyboard.push([
-          { text: service.name, callback_data: `ser_${service.name}` },
-        ]);
-      });
-      await this.masterModel.destroy({ where: { user_id } });
-      await this.masterModel.create({ user_id, last_state: "service" });
-
-      await ctx.replyWithHTML(`What kind of service do you privide?`, {
-        reply_markup: {
-          inline_keyboard: keyboard,
-        },
-      });
-    } catch (error) {
-      console.log("OnMaster error", error);
-    }
-  }
-
-  async onActionService(ctx: Context) {
-    try {
-      const user_id = ctx.from!.id;
-      const user = await this.masterModel.findByPk(user_id);
-      if (user) {
-        user.service = ctx.callbackQuery!["data"].split("_")[1];
-        user.last_state = "name";
-        await user.save();
-
-        await ctx.reply(`Okey, ${user.service}! What is your name?`, {
-          parse_mode: "HTML",
-          ...Markup.removeKeyboard(),
-        });
+      // } else
+      if (isAdmin && isAdmin.last_state != "finish") {
+        return await ctx.replyWithHTML(
+          `Sorry, but you have not finished your registration. Please enter your ${isAdmin.last_state}`
+        );
       }
+
+      await this.adminModel.create({ user_id, last_state: "name" });
+      await ctx.replyWithHTML(`Okay, new Admin. What is your name?`);
     } catch (error) {
-      console.log("OnActionService error", error);
+      console.log("OnAdmin error", error);
     }
   }
 
@@ -90,13 +60,13 @@ export class MasterService {
       const contextAction = ctx.callbackQuery!["data"];
       const address_id = contextAction.split("_")[1];
 
-      const master = await this.masterModel.findByPk(address_id);
-      master?.destroy();
+      const admin = await this.adminModel.findByPk(address_id);
+      admin?.destroy();
 
       await ctx.editMessageText("Your information has been deleted");
       await ctx.reply(`Who do you want to register as?`, {
         parse_mode: "HTML",
-        ...Markup.keyboard([["Master", "Client"]])
+        ...Markup.keyboard([["/admin", "Sahiy", "Sabirli"]])
           .resize()
           .oneTime(),
       });

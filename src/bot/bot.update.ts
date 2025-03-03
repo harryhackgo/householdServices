@@ -18,6 +18,7 @@ export class BotUpdate {
   async onStart(@Ctx() ctx: Context) {
     this.botService.start(ctx);
   }
+
   @On("text")
   async onText(@Ctx() ctx: Context) {
     await this.botService.onText(ctx);

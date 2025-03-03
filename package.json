@@ -25,15 +25,18 @@
     "@nestjs/core": "^11.0.1",
     "@nestjs/platform-express": "^11.0.1",
     "@nestjs/sequelize": "^11.0.0",
+    "@nestjs/typeorm": "^11.0.0",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.1",
     "config": "^3.3.12",
     "nestjs-telegraf": "^2.8.1",
+    "pg": "^8.13.3",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1",
     "sequelize": "^6.37.5",
     "sequelize-typescript": "^2.1.6",
-    "telegraf": "^4.16.3"
+    "telegraf": "^4.16.3",
+    "typeorm": "^0.3.20"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.2.0",
